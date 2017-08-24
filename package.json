@@ -6,7 +6,8 @@
   "scripts": {
     "build": "./scripts/build.sh",
     "test": "npm run build",
-    "start": "cd dist && python3 -m http.server"
+    "start": "cd dist && python3 -m http.server",
+    "watch": "watchrun src ./scripts/build.sh --watch"
   },
   "repository": {
     "type": "git",

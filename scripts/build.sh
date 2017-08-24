@@ -3,8 +3,8 @@ set -eo pipefail
 
 mkdir -p dist
 
-for file in src/*.md; do
-  basename="${file##*/}"
+build() {
+  basename="${1##*/}"
   output="dist/${basename%.md}.html"
   pandoc \
     --to=revealjs \
@@ -12,9 +12,12 @@ for file in src/*.md; do
     --output="$output" \
     --standalone \
     --variable=theme:simple \
-    "$file"
-  echo "$file -> $output"
-done
+    "$1"
+  echo "$1 -> $output"
+}
+
+[[ "$1" == "--watch" && $# -eq 4 ]] && build "$2$4" || \
+  for file in src/*.md; do build "$file"; done
 
 cd dist
 
