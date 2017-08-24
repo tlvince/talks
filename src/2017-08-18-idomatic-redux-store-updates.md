@@ -29,9 +29,9 @@ const updateShipmentReducer = (state, action) => {
 const { [parentDocId]: ... }
 ```
 
----
+## ES2015 [computed property names][]
 
-ES2015 object literal [computed property names][]
+AKA dynamic object keys
 
 ```js
 const parentDocId = 'foo'
@@ -52,9 +52,9 @@ obj
 const { [parentDocId], ... } = state
 ```
 
----
+## ES2015 [object destructuring][]
 
-ES2015 [Object destructuring][] assigns new variables from object properties
+Assigns new variables from object properties
 
 ```js
 const props = { id: '1', name: 'bahmutov' }
@@ -64,7 +64,6 @@ const { id, name } = props
 
 [Object destructuring]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Object_destructuring
 
-
 # Object rest/spread
 
 ---
@@ -73,9 +72,9 @@ const { id, name } = props
 const { ...nextState } = state
 ```
 
----
+## [Object spread][]
 
-[Object spread][] shallow-clones objects via:
+Shallow-clones objects via:
 
 ```js
 const nextState = Object.assign({}, state)
@@ -101,8 +100,6 @@ const updateShipmentReducer = (state, action) => {
   }
 }
 ```
-
----
 
 ## Why?
 
@@ -142,9 +139,9 @@ return {
 }
 ```
 
-# Refs
+# Fin!
 
----
+## References
 
 * [Use ES7 Object Rest Operator to Omit Properties][]
 * [Airbnb JS style guide][]
