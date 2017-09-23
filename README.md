@@ -1,5 +1,10 @@
 # talks
 
+[![Build Status][travis-image]][travis-url]
+
+[travis-url]: https://travis-ci.org/tlvince/talks
+[travis-image]: https://travis-ci.org/tlvince/talks.svg?branch=master
+
 > Talks by tlvince
 
 Presentations written in markdown and converted to a Reveal.js deck via [Pandoc][].
