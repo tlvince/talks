@@ -19,6 +19,8 @@ build() {
 [[ "$1" == "--watch" && $# -eq 4 ]] && build "$2$4" || \
   for file in src/*.md; do build "$file"; done
 
+cp src/*.pdf dist
+
 cd dist
 
 ../node_modules/.bin/indexifier --html . > index.html
