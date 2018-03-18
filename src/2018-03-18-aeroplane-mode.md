@@ -4,6 +4,23 @@ author: \@tlvince
 date: 2018-03-18
 ---
 
+* Sort of an expert piece talk format, but want to move more towards passing on learnings
+* Structured in the "powers of three" form
+  * 5 mins per section
+  * 5 mins for intro, questions etc.
+
+# Possible titles
+
+1. Aeroplane mode
+2. Offline dinosaur (Chrome design language)
+3. (Offline dinosaur): there is no internet connection
+4. (Offline dinosaur): unable to connect to the internet
+5. Offline First
+6. How to democratise the internet
+7. The world isn't as connected as you think
+8. Why offline matters
+9. Unconnected world
+
 # 1. Designing for the next billion
 
 ## Background
