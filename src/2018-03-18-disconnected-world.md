@@ -1,5 +1,5 @@
 ---
-title: Aeroplane Mode
+title: Disconnected World
 author: \@tlvince
 date: 2018-03-18
 ---
@@ -20,6 +20,7 @@ date: 2018-03-18
 7. The world isn't as connected as you think
 8. Why offline matters
 9. Unconnected world
+10. You are offline
 
 # 1. Designing for the next billion
 
@@ -31,7 +32,7 @@ date: 2018-03-18
 * These users are not necessarily young millennials
 * What learnings can we apply from developing for habitually connected people?
 
-## Conjectures
+## Learnings
 
 * We can't keep building things with the mindset that the internet is always there
 * Limited access to the internet forces us to think about designing for offline
@@ -67,7 +68,7 @@ date: 2018-03-18
   * In conferences where too many people are connected at once
 * 4G is not as pervasive as you think
 
-## Conjectures
+## Learnings
 
 * Network connectivity is intermittent at best. Deal with it.
 * Lack of internet should not be considered an error
@@ -99,14 +100,14 @@ date: 2018-03-18
 
 ## Background
 
-* How many times have you seen "“Error Establishing A Database Connection" (Wordpress error)
+* How many times have you seen “Error Establishing A Database Connection" (Wordpress error)
   * Centralised, single point of failure
 * People are becoming more de-sensitised to decentralised, distributed systems
   * Bitcoin, blockchain
 * What happens when your favourite unicorn startup is bought or shut down?
   * Where does my data go? Can I still access it?
 
-## Conjectures
+## Learnings
 
 * Offline first is an enabler
 * It offers universal access to the internet regardless of how good your connection is
