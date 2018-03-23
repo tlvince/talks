@@ -7,8 +7,7 @@ build() {
   basename="${1##*/}"
   output="dist/${basename%.md}.html"
   pandoc \
-    --to=revealjs \
-    --smart \
+    --to=revealjs+smart \
     --output="$output" \
     --standalone \
     --variable=theme:simple \
