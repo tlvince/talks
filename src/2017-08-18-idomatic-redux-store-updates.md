@@ -2,6 +2,7 @@
 title: Idiomatic Redux store updates
 author: \@tlvince
 date: 2017-08-18
+theme: simple
 ---
 
 # Rationale

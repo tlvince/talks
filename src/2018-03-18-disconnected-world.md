@@ -1,8 +1,9 @@
 ---
+title: Disconnected World
+author: \@tlvince
+date: 2018-03-18
 theme: black
 ---
-
-# Disconnected World {data-background-image='/images/kano-dala-hill.jpg'}
 
 # We're not as connected as you might think
 
