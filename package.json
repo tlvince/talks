@@ -6,6 +6,7 @@
   "scripts": {
     "build": "./scripts/build.sh",
     "build-pdf": "./scripts/build-pdf.sh",
+    "optimise": "jpegoptim --strip-all src/images/*.jpg && optipng -o7 src/images/*.png",
     "prebuild": "rm -rf dist && mkdir dist",
     "test": "npm run build",
     "serve": "cd dist && python3 -m http.server",
