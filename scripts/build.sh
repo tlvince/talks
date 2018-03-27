@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-mkdir -p dist
-
 build() {
   basename="${1##*/}"
-  output="dist/${basename%.md}.html"
+  basename="${basename%.md}"
+  output="dist/${basename}.html"
   pandoc \
     --to=revealjs+smart \
     --output="$output" \
     --standalone \
-    --variable=theme:simple \
+    --variable=history:true \
     "$1"
+  [[ -x "scripts/${basename}.js" ]] && "./scripts/${basename}.js"
   echo "$1 -> $output"
 }
 
-[[ "$1" == "--watch" && $# -eq 4 ]] && build "$2$4" || \
-  for file in src/*.md; do build "$file"; done
-
-cp src/*.pdf dist
-
-cd dist
-
-../node_modules/.bin/indexifier --html . > index.html
-
-echo "talks.tlvince.com" > CNAME
-
-[[ -L reveal.js ]] || {
-  [[ $CI ]] && cmd="cp -r" || cmd="ln -s"
-  $cmd ../node_modules/reveal.js .
+# Fast watch mode
+[[ "$1" ]] && {
+  build "$1"
+  [[ -L dist/reveal.js ]] && exit
+  cd dist
+  ln -s "../node_modules/reveal.js" .
+  ln -s "../src/images" .
+  exit
 }
+
+for file in src/*.md; do build "$file"; done
+cd dist
+../node_modules/.bin/indexifier --html . | grep -v 'href="./index.html"' > index.html
+echo "talks.tlvince.com" > CNAME
+cp -r ../node_modules/reveal.js .
+cp -r ../src/images .
+cp ../src/*.pdf .

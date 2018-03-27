@@ -5,9 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "./scripts/build.sh",
+    "build-pdf": "./scripts/build-pdf.sh",
+    "prebuild": "rm -rf dist && mkdir dist",
     "test": "npm run build",
-    "start": "cd dist && python3 -m http.server",
-    "watch": "watchrun src ./scripts/build.sh --watch"
+    "serve": "cd dist && python3 -m http.server",
+    "start": "run-s build serve",
+    "watch": "run-p watch-build watch-serve",
+    "watch-build": "inotifywait -mrq -e close_write --exclude 4913 src | while read dir event file; do ./scripts/build.sh \"$dir$file\"; done",
+    "watch-serve": "live-server --wait=1000 dist"
   },
   "repository": {
     "type": "git",
@@ -24,14 +29,14 @@
   "author": "Tom Vincent <git@tlvince.com> (https://tlvince.com)",
   "engines": {
     "npm": ">=5.3",
-    "node": ">=6.11"
+    "node": ">=8"
   },
   "bugs": {
     "url": "https://github.com/tlvince/talks/issues"
   },
   "homepage": "https://github.com/tlvince/talks#readme",
   "dependencies": {
-    "reveal.js": "3.5.0"
+    "reveal.js": "3.6.0"
   },
   "files": [
     "src"
@@ -39,6 +44,10 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "indexifier": "3.0.1"
+    "cheerio": "1.0.0-rc.2",
+    "decktape": "2.8.0",
+    "indexifier": "3.0.1",
+    "live-server": "1.2.0",
+    "npm-run-all": "4.1.2"
   }
 }
