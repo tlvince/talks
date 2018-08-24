@@ -34,6 +34,10 @@ theme: black
 
 # Europe {data-background-image='/images/europe-80.jpg' data-background-size='contain'}
 
+<small>(This and the following slides borrowed from Ally Long's awesome <cite>[Field-tested interfaces for the next billion – Generate Conf][europe]</cite>. Thanks!)</small>
+
+[europe]: https://speakerdeck.com/allyelle/field-tested-interfaces-for-the-next-billion-generate-conf?slide=7
+
 :::notes
 * Starting close to home, around 80% of us are connected to the internet
 :::
@@ -187,12 +191,25 @@ theme: black
 * Synced back to the mothership for analysis
 :::
 
-# {data-background-image='/images/hustle.jpg'}
+# Takeaways
 
-**Billion's coming online**  
-**Offline can be seamless**  
-**Offline social movement**
+1. Billions are coming online  
+2. Offline can be seamless  
+3. Offline is a social movement
 
 # Thanks
 
 @tlvince
+
+# Credits
+
+- [Internet access grows worldwide but remains higher in advanced economies ][] --- Paw Research Centre
+- [Field-tested interfaces for the next billion – Generate Conf][] --- Ally Long ([The Next Billon](#/europe) slides, [Design for all](#/section-4) slides)
+- [eHealth Africa][] --- selected imagery
+- [Field Intelligence][] --- selected imagery
+
+[Internet access grows worldwide but remains higher in advanced economies ]: http://www.pewglobal.org/2016/02/22/internet-access-growing-worldwide-but-remains-higher-in-advanced-economies/
+[Field-tested interfaces for the next billion – Generate Conf]: https://speakerdeck.com/allyelle/field-tested-interfaces-for-the-next-billion-generate-conf
+[eHealth Africa]: https://www.ehealthafrica.org/
+[Field Intelligence]: https://www.fieldintelligence.org/
+
