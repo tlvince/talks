@@ -205,10 +205,12 @@ theme: black
 
 - [Internet access grows worldwide but remains higher in advanced economies ][] --- Paw Research Centre
 - [Field-tested interfaces for the next billion – Generate Conf][] --- Ally Long ([The Next Billon](#/europe) slides, [Design for all](#/section-4) slides)
+- [Improving performance with background data prefetching][] --- Instagram Engineering
 - [eHealth Africa][] --- selected imagery
 - [Field Intelligence][] --- selected imagery
 
 [Internet access grows worldwide but remains higher in advanced economies ]: http://www.pewglobal.org/2016/02/22/internet-access-growing-worldwide-but-remains-higher-in-advanced-economies/
+[Improving performance with background data prefetching]: https://instagram-engineering.com/improving-performance-with-background-data-prefetching-b191acb39898
 [Field-tested interfaces for the next billion – Generate Conf]: https://speakerdeck.com/allyelle/field-tested-interfaces-for-the-next-billion-generate-conf
 [eHealth Africa]: https://www.ehealthafrica.org/
 [Field Intelligence]: https://www.fieldintelligence.org/
