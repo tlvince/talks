@@ -10,6 +10,7 @@ build() {
     --output="$output" \
     --standalone \
     --variable=history:true \
+    --variable=revealjs-url:/reveal.js \
     "$1"
   echo "$1 -> $output"
 }
