@@ -3,6 +3,8 @@ title: Disconnected World
 author: \@tlvince
 date: 2018-03-18
 theme: black
+title-slide-attributes:
+  data-background-image: /images/kano-dala-hill.jpg
 ---
 
 # We're not as connected as you might think
@@ -193,8 +195,8 @@ theme: black
 
 # Takeaways
 
-1. Billions are coming online  
-2. Offline can be seamless  
+1. Billions are coming online
+2. Offline can be seamless
 3. Offline is a social movement
 
 # Thanks
@@ -214,4 +216,3 @@ theme: black
 [Field-tested interfaces for the next billion – Generate Conf]: https://speakerdeck.com/allyelle/field-tested-interfaces-for-the-next-billion-generate-conf
 [eHealth Africa]: https://www.ehealthafrica.org/
 [Field Intelligence]: https://www.fieldintelligence.org/
-

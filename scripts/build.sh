@@ -6,12 +6,11 @@ build() {
   basename="${basename%.md}"
   output="dist/${basename}.html"
   pandoc \
-    --to=revealjs+smart \
+    --to=revealjs \
     --output="$output" \
     --standalone \
     --variable=history:true \
     "$1"
-  [[ -x "scripts/${basename}.js" ]] && "./scripts/${basename}.js"
   echo "$1 -> $output"
 }
 

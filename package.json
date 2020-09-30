@@ -45,7 +45,6 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "cheerio": "1.0.0-rc.2",
     "decktape": "2.8.0",
     "indexifier": "3.0.1",
     "live-server": "1.2.0",
