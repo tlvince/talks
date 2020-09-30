@@ -29,15 +29,15 @@
   ],
   "author": "Tom Vincent <git@tlvince.com> (https://tlvince.com)",
   "engines": {
-    "npm": ">=5.3",
-    "node": ">=8"
+    "npm": ">=6",
+    "node": ">=12"
   },
   "bugs": {
     "url": "https://github.com/tlvince/talks/issues"
   },
   "homepage": "https://github.com/tlvince/talks#readme",
   "dependencies": {
-    "reveal.js": "3.6.0"
+    "reveal.js": "4.0.2"
   },
   "files": [
     "src"
@@ -45,9 +45,9 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "decktape": "2.8.0",
-    "indexifier": "3.0.1",
-    "live-server": "1.2.0",
-    "npm-run-all": "4.1.2"
+    "decktape": "3.1.0",
+    "indexifier": "3.2.2",
+    "live-server": "1.2.1",
+    "npm-run-all": "4.1.5"
   }
 }
