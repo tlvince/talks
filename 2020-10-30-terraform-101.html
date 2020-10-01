@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="@tlvince">
+  <meta name="dcterms.date" content="2020-10-30">
+  <title>Terraform 101</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/reveal.js/dist/theme/simple.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Terraform 101</h1>
+  <p class="author">@tlvince</p>
+  <p class="date">2020-10-30</p>
+</section>
+
+<section id="basics" class="slide level2">
+<h2>Basics</h2>
+<ul>
+<li>Infrastructure as <del>Code</del> Config
+<ul>
+<li>See <a href="https://www.pulumi.com/">Pulumi</a> for “Code”</li>
+</ul></li>
+<li>multi provider
+<ul>
+<li>cloud-orientated, but not limited to</li>
+</ul></li>
+<li>declarative</li>
+<li>execution plans</li>
+<li>composeable resources</li>
+<li>parallel resource creation</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>terraform: build infrastructure. Build the restaurant’s building plumbing</li>
+<li>ansible: configuration management. Write the menu</li>
+<li>docker/packer: supercede configuration management, immutable</li>
+<li>if you’ve ever had to use CloudFormation, composability is a God-send</li>
+</ul>
+</aside>
+</section>
+<section id="syntax" class="slide level2">
+<h2>Syntax</h2>
+<ul>
+<li>Written in HashiCorp configuration language (HCL)
+<ul>
+<li><code>.ini</code> like, supports comments</li>
+</ul></li>
+<li>resources, modules
+<ul>
+<li>everything’s centred around managing resources</li>
+</ul></li>
+</ul>
+<pre class="hcl"><code>&lt;BLOCK TYPE&gt; &quot;&lt;BLOCK LABEL&gt;&quot; &quot;&lt;BLOCK LABEL&gt;&quot; {
+  # Block body
+  &lt;IDENTIFIER&gt; = &lt;EXPRESSION&gt; # Argument
+}</code></pre>
+</section>
+<section id="resource-example" class="slide level2">
+<h2>Resource example</h2>
+<pre class="hcl"><code>resource &quot;aws_s3_bucket&quot; &quot;my_bucket&quot; {
+  bucket = &quot;my-bucket&quot;
+  acl    = &quot;private&quot;
+
+  tags = {
+    Name        = &quot;My bucket&quot;
+    Environment = &quot;Dev&quot;
+  }
+}</code></pre>
+</section>
+<section id="lifecycle" class="slide level2">
+<h2>Lifecycle</h2>
+<ul>
+<li>state file: map config to real resources</li>
+<li>refresh: reconcile state with reality</li>
+<li>plan: diff state against desired state</li>
+<li>apply: apply changes, update state</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>state: internal JSON representation, resolve metadata, IDs etc.</li>
+<li>best stored remotely (e.g. S3, but careful with locking)</li>
+</ul>
+</aside>
+</section>
+<section id="execution-plan" class="slide level2">
+<h2>Execution plan</h2>
+<ul>
+<li>main differentiator</li>
+<li>integrates nicely with PRs</li>
+<li>easy to read diff</li>
+<li>approve before applying changes</li>
+</ul>
+</section>
+<section id="plan-example" class="slide level2">
+<h2>Plan example</h2>
+<pre><code>Terraform v0.12.24
+Configuring remote state backend...
+Initializing Terraform configuration...
+2020/03/25 17:12:54 [DEBUG] Using modified User-Agent: Terraform/0.12.24 TFC/d55ce1e9f0
+Refreshing Terraform state in-memory prior to plan...
+aws_cloudwatch_log_group.example_log_group: Refreshing state... [id=/aws/lambda/example]
+
+----------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+  - remove
+
+Terraform will perform the following actions:
+
+  # aws_lambda_function.example will be created
+  + resource &quot;aws_lambda_function&quot; &quot;example&quot; {
+      + arn                            = (known after apply)
+      + description                    = &quot;My lambda&quot;
+
+  # aws_lambda_function.example_2 will be updated in-place
+  ~ resource &quot;aws_lambda_function&quot; &quot;example_2&quot; {
+      ~ memory_size                    = 1024 -&gt; 512
+
+  # aws_lambda_function.example_3 will be removed
+  - resource &quot;aws_lambda_function&quot; &quot;example_3&quot;</code></pre>
+</section>
+<section id="workspaces" class="slide level2">
+<h2>Workspaces</h2>
+<ul>
+<li>logical grouping of resources</li>
+<li>each workspace gets its own isolated state file</li>
+<li>use cases:
+<ul>
+<li>isolate environments (though account-level isolation better)</li>
+<li>as a temporary infra copy (per Git branches)</li>
+<li>same infra, different env variables</li>
+<li>modularise larger workspaces to limit blast radius</li>
+</ul></li>
+</ul>
+<aside class="notes">
+<ul>
+<li>ideally shouldn’t be differences between envs anyway</li>
+</ul>
+</aside>
+</section>
+<section id="caveats" class="slide level2">
+<h2>Caveats*</h2>
+<ul>
+<li>providers are just (Go) wrappers over vendor APIs</li>
+<li>behaviour can be inconsistent with admin console</li>
+<li>interpolations are unknown until <code>apply</code></li>
+<li>language limitations: <code>count</code> vs <code>if</code>, no <code>module</code> <code>count</code>, <code>depends_on</code></li>
+<li>tests?! localstack can help</li>
+<li>not suitable for app code</li>
+<li>importing existing infra into Terraform is painful</li>
+</ul>
+<p>*as of v0.12</p>
+<aside class="notes">
+<ul>
+<li>some AWS features released before API and/or provider</li>
+<li>API Gateway was a common source of frustration
+<ul>
+<li>deployment model (redeploy if child resources change) inconsistent with TF</li>
+<li>lost API usage keys</li>
+<li>deploy fails with custom domains</li>
+</ul></li>
+<li>before v0.12, everything was a string</li>
+<li><code>plan</code>/<code>apply</code> churn</li>
+<li><code>count = var.some_condition == true ? 1 : 0</code></li>
+<li>app code:
+<ul>
+<li>unoptimised for large bundles (e.g. Lambda zips)</li>
+<li>non-deterministic deployment package hashing</li>
+<li>solution: decouple from tf run</li>
+</ul></li>
+</ul>
+</aside>
+</section>
+<section id="automation-ideas" class="slide level2">
+<h2>Automation ideas</h2>
+<ul>
+<li><code>plan</code> output in PRs</li>
+<li><code>terraform {fmt,validate}</code></li>
+<li><code>tflint</code>: provider-specific linting + house style</li>
+<li>interactive approval and <code>apply</code></li>
+</ul>
+<aside class="notes">
+<ul>
+<li>Jenkins <code>input</code>, Atlantis</li>
+</ul>
+</aside>
+</section>
+<section id="thanks" class="slide level2">
+<h2>Thanks!</h2>
+</section>
+    </div>
+  </div>
+
+  <script src="/reveal.js/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="/reveal.js/plugin/notes/notes.js"></script>
+  <script src="/reveal.js/plugin/search/search.js"></script>
+  <script src="/reveal.js/plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>

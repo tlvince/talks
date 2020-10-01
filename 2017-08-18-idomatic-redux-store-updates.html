@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="@tlvince">
+  <meta name="dcterms.date" content="2017-08-18">
+  <title>Idiomatic Redux store updates</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/reveal.js/dist/theme/simple.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Idiomatic Redux store updates</h1>
+  <p class="author">@tlvince</p>
+  <p class="date">2017-08-18</p>
+</section>
+
+<section>
+<section id="rationale" class="title-slide slide level1">
+<h1>Rationale</h1>
+
+</section>
+<section id="update-store-slice" class="slide level2">
+<h2>Update store slice</h2>
+<aside class="notes">
+<ul>
+<li>Normalised Redux state</li>
+<li>Treat store as a DB</li>
+<li>Each data type gets its own slice (e.g. table)</li>
+<li>Slice records indexed by ID</li>
+</ul>
+<p>What do you do when you need to update a record?</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">const</span> updateShipmentReducer <span class="op">=</span> (state<span class="op">,</span> action) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  <span class="kw">const</span> parentDocId <span class="op">=</span> action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">parentDocId</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  <span class="kw">const</span> { [parentDocId]<span class="op">:</span> omit<span class="op">,</span> <span class="op">...</span>nextState } <span class="op">=</span> state</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  <span class="cf">return</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>    <span class="op">...</span>nextState<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    [action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">snapshotId</span>]<span class="op">:</span> {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>      <span class="op">...</span>action<span class="op">.</span><span class="at">shipment</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>  }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>}</span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>One example</li>
+<li>Shipments “table”</li>
+<li>Unfamiliar syntax</li>
+</ul>
+<p>Lets break it down</p>
+</aside>
+</section></section>
+<section>
+<section id="computed-properties" class="title-slide slide level1">
+<h1>Computed properties</h1>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">const</span> { [parentDocId]<span class="op">:</span> <span class="op">...</span> }</span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>Bracket notation</li>
+<li>Probably familiar as accessor</li>
+<li>But not as a object property?</li>
+</ul>
+</aside>
+</section>
+<section id="es2015-computed-property-names" class="slide level2">
+<h2>ES2015 <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names">computed property names</a></h2>
+<p>AKA dynamic object keys</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">const</span> parentDocId <span class="op">=</span> <span class="st">&#39;foo&#39;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">const</span> obj <span class="op">=</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  [parentDocId <span class="op">+</span> <span class="st">&#39;Bar&#39;</span>]<span class="op">:</span> <span class="st">&#39;baz&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>obj</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">//=&gt; { fooBar: &#39;baz&#39; }</span></span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>Use result of expression as object key</li>
+<li>Concatenated right within the object literal</li>
+</ul>
+</aside>
+</section></section>
+<section>
+<section id="object-destructuring" class="title-slide slide level1">
+<h1>Object destructuring</h1>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">const</span> { [parentDocId]<span class="op">,</span> <span class="op">...</span> } <span class="op">=</span> state</span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>Looking at the <code>=</code> after the object</li>
+</ul>
+</aside>
+</section>
+<section id="es2015-object-destructuring" class="slide level2">
+<h2>ES2015 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Object_destructuring">object destructuring</a></h2>
+<p>Assigns new variables from object properties</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">const</span> props <span class="op">=</span> { <span class="dt">id</span><span class="op">:</span> <span class="st">&#39;1&#39;</span><span class="op">,</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;bahmutov&#39;</span> }</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="kw">const</span> { id<span class="op">,</span> name } <span class="op">=</span> props</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="co">//=&gt; const id = &#39;1&#39;; const name = &#39;bahmutov&#39;</span></span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>Unpack properties from object into variables</li>
+</ul>
+</aside>
+</section></section>
+<section>
+<section id="object-restspread" class="title-slide slide level1">
+<h1>Object rest/spread</h1>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">const</span> { <span class="op">...</span>nextState } <span class="op">=</span> state</span></code></pre></div>
+</section>
+<section id="object-spread" class="slide level2">
+<h2><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator#Spread_in_object_literals">Object spread</a></h2>
+<p>Shallow-clones objects via:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">const</span> nextState <span class="op">=</span> <span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>({}<span class="op">,</span> state)</span></code></pre></div>
+<p>Not yet formalised in ES spec!</p>
+</section></section>
+<section>
+<section id="recap" class="title-slide slide level1">
+<h1>Recap</h1>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">const</span> updateShipmentReducer <span class="op">=</span> (state<span class="op">,</span> action) <span class="kw">=&gt;</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>  <span class="kw">const</span> parentDocId <span class="op">=</span> action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">parentDocId</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>  <span class="kw">const</span> { [parentDocId]<span class="op">:</span> omit<span class="op">,</span> <span class="op">...</span>nextState } <span class="op">=</span> state</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>  <span class="cf">return</span> {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>    <span class="op">...</span>nextState<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a>    [action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">snapshotId</span>]<span class="op">:</span> {</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>      <span class="op">...</span>action<span class="op">.</span><span class="at">shipment</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a>    }</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>  }</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a>}</span></code></pre></div>
+</section>
+<section id="why" class="slide level2">
+<h2>Why?</h2>
+<ul>
+<li>shipments indexed by ID in <code>shipments</code> slice
+<ul>
+<li>see: normalising state shape</li>
+</ul></li>
+<li>shipment has just been modified
+<ul>
+<li>e.g. <code>api.saveChanges</code> to update batch quantities</li>
+</ul></li>
+<li>Need to update store slice immutably</li>
+</ul>
+</section>
+<section id="result" class="slide level2">
+<h2>Result</h2>
+<p><code>state</code> was updated immutably with the parent shipment key omitted</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">const</span> state <span class="op">=</span> { <span class="dt">shipmentA</span><span class="op">:</span> {}<span class="op">,</span> <span class="dt">shipmentB</span><span class="op">:</span> {} }</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="kw">const</span> parentDocId <span class="op">=</span> <span class="st">&#39;shipmentA&#39;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="kw">const</span> { [parentDocId]<span class="op">:</span> omit<span class="op">,</span> <span class="op">...</span>nextState } <span class="op">=</span> state</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>nextState</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="co">//=&gt; { shipmentB: {}}</span></span></code></pre></div>
+<p>Check with <a href="https://babeljs.io/repl/#?babili=false&amp;evaluate=true&amp;lineWrap=false&amp;presets=es2015%2Ces2015-loose%2Creact%2Cstage-0&amp;targets=&amp;browsers=&amp;builtIns=false&amp;debug=false&amp;code_lz=MYewdgzgLgBADgQwE4FMxQCImASQCYwC8MA5BABYCWcAtmlAIIkBQzoks0CUKRMA3sxgwK1OugYAuAUOExKeaSQQthAXwA0s0bXoAhaYLnzFpAEaqYm7VV3oAwodnCFS4JbXNPbcNAEwAbURUdCxcPABdaRAaSigNGAA6ZLAUAA8oAGUobl41Pi4eVnYIEAAbFESykABzAAoSYPow_BgAWgA-UgSm0Ox8AEofSHLK6vqSGLj2rpIEqaghktGq2obUjOzcme6YDaycngGgA&amp;experimental=true&amp;loose=true&amp;spec=false">Babel REPL</a></p>
+</section>
+<section id="actual-update" class="slide level2">
+<h2>Actual update</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">const</span> parentDocId <span class="op">=</span> action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">parentDocId</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="cf">return</span> {</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>  <span class="co">// Spread</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a>  <span class="op">...</span>nextState<span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a>  [action<span class="op">.</span><span class="at">shipment</span><span class="op">.</span><span class="at">snapshotId</span>]<span class="op">:</span> {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a>    <span class="co">// Spread</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a>    <span class="op">...</span>action<span class="op">.</span><span class="at">shipment</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a>  }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a>}</span></code></pre></div>
+</section></section>
+<section>
+<section id="fin" class="title-slide slide level1">
+<h1>Fin!</h1>
+
+</section>
+<section id="references" class="slide level2">
+<h2>References</h2>
+<ul>
+<li><a href="https://medium.com/@markbrouch/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90">Use ES7 Object Rest Operator to Omit Properties</a></li>
+<li><a href="https://github.com/airbnb/javascript/blob/master/README.md#objects--rest-spread">Airbnb JS style guide</a></li>
+<li><a href="http://redux.js.org/docs/recipes/reducers/NormalizingStateShape.html">Redux normalise state shape</a></li>
+<li><a href="http://redux.js.org/docs/recipes/reducers/ImmutableUpdatePatterns.html">Redux immutable update patterns</a></li>
+<li><a href="https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#supported-language-features-and-polyfills">CRA supported language features and polyfills</a></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="/reveal.js/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="/reveal.js/plugin/notes/notes.js"></script>
+  <script src="/reveal.js/plugin/search/search.js"></script>
+  <script src="/reveal.js/plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>

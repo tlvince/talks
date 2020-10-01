@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="@tlvince">
+  <meta name="dcterms.date" content="2017-10-16">
+  <title>How we devop</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/reveal.js/dist/theme/black.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">How we devop</h1>
+  <p class="author">@tlvince</p>
+  <p class="date">2017-10-16</p>
+</section>
+
+<section>
+<section id="static-web-apps" class="title-slide slide level1">
+<h1>Static web apps</h1>
+
+</section>
+<section id="common-case" class="slide level2">
+<h2>Common case</h2>
+<ul>
+<li>Most apps are Progressive Web Apps
+<ul>
+<li>“No server needed”</li>
+</ul></li>
+<li>Scaffolds come with their own build chain
+<ul>
+<li>Use Create React App unless you have a good reason not to</li>
+</ul></li>
+</ul>
+</section>
+<section id="cicd" class="slide level2">
+<h2>CI/CD</h2>
+<ul>
+<li>TravisCI (pro); primarily Continuous Integration
+<ul>
+<li>Default: <code>script: npm test</code></li>
+<li>Therefore, run <code>build</code> <code>after_success</code></li>
+</ul></li>
+<li>TravisCI can do CD: Continuous <del>Deployment</del> Delivery
+<ul>
+<li>Multiple providers; mostly concerned with S3</li>
+</ul></li>
+</ul>
+</section>
+<section id="s3" class="slide level2">
+<h2>S3</h2>
+<ul>
+<li>Main origin</li>
+<li>Use DNS-compliant names; <code>-</code> seperated, not <code>.</code></li>
+<li>TravisCI <a href="https://github.com/travis-ci/dpl/pull/170">can’t currently</a> set caching headers per-file
+<ul>
+<li>Use <a href="https://github.com/tlvince/awss3-deploy">awss3-deploy</a></li>
+</ul></li>
+<li><a href="https://github.com/tlvince/conditional-travis-deploy">conditional-travis-deploy</a> used determine environment/build type, “triggers”</li>
+</ul>
+</section>
+<section id="cloudfront" class="slide level2">
+<h2>CloudFront</h2>
+<ul>
+<li>CDN</li>
+<li>S3 can’t serve SSL/custom domains</li>
+<li>Have to be careful with caching headers
+<ul>
+<li>Set <code>no-cache</code> on <code>index.html</code>, rev everything else</li>
+</ul></li>
+</ul>
+</section>
+<section id="cloudflare" class="slide level2">
+<h2>CloudFlare</h2>
+<ul>
+<li>CDN, but also happens to provide a nice distributed DNS with an API
+<ul>
+<li>Make sure to disable it’s CDN (orange cloud icon)</li>
+</ul></li>
+<li>CNAME subdomain <code>[env].[app].[domain].[tld]</code> to CloudFront URL</li>
+</ul>
+</section>
+<section id="letsencrypt" class="slide level2">
+<h2>LetsEncrypt</h2>
+<ul>
+<li>Free SSL certificates</li>
+<li>Currently issuing cert per app</li>
+<li>Automate proof of domain ownership via dehdrate + lexicon</li>
+</ul>
+</section>
+<section id="backups" class="slide level2">
+<h2>Backups</h2>
+<ul>
+<li>Archive and hot swap via awss3-deploy</li>
+<li>Bucket retention &amp; rotation rules</li>
+<li>Rollback via directory switching
+<ul>
+<li>Not had to thus far</li>
+</ul></li>
+</ul>
+</section>
+<section id="monitoring" class="slide level2">
+<h2>Monitoring</h2>
+<ul>
+<li>AWS health check</li>
+<li>Uptimerobot (availability/ping metrics)</li>
+<li><code>ssl-check</code></li>
+</ul>
+</section>
+<section id="risks" class="slide level2">
+<h2>Risks</h2>
+<ul>
+<li>AWS reliance
+<ul>
+<li>S3 outage</li>
+</ul></li>
+</ul>
+</section>
+<section id="alternatives" class="slide level2">
+<h2>Alternatives</h2>
+<ul>
+<li>Surge</li>
+<li>Netlify</li>
+<li>GitHub pages</li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="/reveal.js/dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="/reveal.js/plugin/notes/notes.js"></script>
+  <script src="/reveal.js/plugin/search/search.js"></script>
+  <script src="/reveal.js/plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
