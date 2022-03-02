@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/tlvince/talks#readme",
   "dependencies": {
-    "reveal.js": "4.0.2"
+    "reveal.js": "4.3.0"
   },
   "files": [
     "src"
